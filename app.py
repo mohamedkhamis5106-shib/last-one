@@ -57,6 +57,17 @@ if file:
         if st.button("Train Models"):
             X = df.drop(["ID","No_Pation","CLASS"], axis=1)
             y = df["CLASS"]
+            X = df.drop(["ID","No_Pation","CLASS"], axis=1, errors="ignore")
+            y = df["CLASS"]
+            
+            X = X.select_dtypes(include=["int64","float64"]).copy()
+            
+            for col in X.columns:
+                if X[col].isna().any():
+                    X[col] = X[col].fillna(X[col].mean())
+            
+            y = y.fillna(y.mode()[0])
+            y = y.astype(int)
 
             scaler = StandardScaler()
             X = scaler.fit_transform(X)
